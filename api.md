@@ -11,11 +11,11 @@
 ### Description
 ### Params
 ### Returns 
-## GET: /users/all/statistics
+## GET: /users/{id}/statistics
 ### Description
 ### Params
 ### Returns 
-## GET: /users/{id}/statistics
+## GET: /users/all/statistics
 ### Description
 ### Params
 ### Returns 
