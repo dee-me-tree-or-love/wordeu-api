@@ -1,0 +1,24 @@
+{
+  "name": "wordeu-api",
+  "version": "0.0.1",
+  "description": "the api for the wordeu bot to rely on",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dee-me-tree-or-love/wordeu-api.git"
+  },
+  "author": "Dmitrii Olov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dee-me-tree-or-love/wordeu-api/issues"
+  },
+  "homepage": "https://github.com/dee-me-tree-or-love/wordeu-api#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "seraph": "^0.15.2",
+    "seraph-model": "^0.10.1"
+  }
+}
