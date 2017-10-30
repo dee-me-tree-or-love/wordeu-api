@@ -27,8 +27,4 @@ module.exports = (app, db) => {
         console.log(req);
         res.send('Still a todo...')
     });
-    // app.get('/users/all/statistcs', (req, res)=>{
-    //     console.log(req);
-    //     res.send('Still a todo...')
-    // });
 };
