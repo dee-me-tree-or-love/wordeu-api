@@ -5,7 +5,12 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 // neo4j connection
-const db = require('seraph')(process.env.DB_URL);
+const db = require('seraph')({
+    user: process.env.DB_USER || 'neo4j',
+    pass: process.env.DB_PASS || 'neo4j'
+});
+// controllers module loader
+const ctrls = require('./src/domains/controllers.js');
 
 const app = express();
 let server;
@@ -16,14 +21,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 /* App startup */
-let p = new Promise((resolve, reject) => { resolve() });
-p.then(() => {
-        server = app.listen(process.env.PORT || 5005, () => {
-            console.log('Express server listening on port %d in %s mode',
-                server.address().port, app.settings.env);
-                // require routes:
-                require('./src/routes/index.js')(app, {});
-        });
-    });
+server = app.listen(process.env.PORT || 5005, () => {
+    console.log('Express server listening on port %d in %s mode',
+        server.address().port, app.settings.env);
+    // require routes:
+    require('./src/routes/index.js')(app, db, ctrls);
+});
 
 module.exports = app;
