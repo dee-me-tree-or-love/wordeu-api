@@ -2,22 +2,22 @@
 // require the configurations 
 require('dotenv').config();
 
-
-// the express framework
 const express = require('express');
 const bodyParser = require('body-parser');
-
+// neo4j connection
+const db = require('seraph')(process.env.DB_URL);
 
 const app = express();
 let server;
+// support parsing of application/json type post data
 app.use(bodyParser.json());
+// support parsing of application/x-www-form-urlencoded post data
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 /* App startup */
 let p = new Promise((resolve, reject) => { resolve() });
-p.then(() => db.open('./db/database.sqlite', { Promise })) // open the database -> change to neo4j
-    .then(() => db.migrate({ force: 'last' }))
-    .catch(err => console.error(err.stack))
-    .then(() => {
+p.then(() => {
         server = app.listen(process.env.PORT || 5005, () => {
             console.log('Express server listening on port %d in %s mode',
                 server.address().port, app.settings.env);
