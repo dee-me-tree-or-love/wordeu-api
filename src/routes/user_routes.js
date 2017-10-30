@@ -8,10 +8,27 @@ module.exports = (app, db, ctrls) => {
     // route declaration
     // CREATE NEW USER
     app.post(`/${DOMAIN}/new`, (req, res) => {
-        
+
         const ctrl = new ctrls.UserController(db);
-        const user = ctrl.create(req.body.pageId, req.body.name);
-        res.send(JSON.stringify(user));
+        const cb = (err, user) => {
+            if (err) {
+                res.status(500).send(JSON.stringify({ error: err }));
+                return;
+            }
+            if (user) {
+                console.log('user created: ', user);
+                res.send(JSON.stringify(user));
+
+            }
+        }
+        console.log('creating user');
+        try {
+
+            const user = ctrl.create(req.body.pageId, req.body.name, cb);
+        } catch (e){
+
+            res.status(500).send(JSON.stringify({error: e}));
+        }
     });
     // GET USER BY ID
     app.get(`/${DOMAIN}/:userId`, (req, res) => {
