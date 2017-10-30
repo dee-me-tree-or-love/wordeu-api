@@ -22,13 +22,13 @@ module.exports = (app, db) => {
     app.get(`/${DOMAIN}/:userId/statistics`, (req,res)=>{
         res.send('Still a todo...')
     })
-    // // GET ALL USER STATS
-    // app.get(`/${DOMAIN}/all/statistcs`, (req, res)=>{
-    //     console.log(req);
-    //     res.send('Still a todo...')
-    // });
-    app.get('/users/all/statistcs', (req, res)=>{
+    // GET ALL USER STATS
+    app.get(`/${DOMAIN}/all/statistcs`, (req, res)=>{
         console.log(req);
         res.send('Still a todo...')
     });
+    // app.get('/users/all/statistcs', (req, res)=>{
+    //     console.log(req);
+    //     res.send('Still a todo...')
+    // });
 };
