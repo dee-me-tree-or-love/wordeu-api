@@ -1,9 +1,11 @@
 # Users
 ## POST: /users/new
 ### Description
+Create new user node
 ### Params
 ### Returns 
-## GET: /users/{id}
+## GET: /users/pid/{id}
+Get the user by facebook page id
 ### Description
 ### Params
 ### Returns 

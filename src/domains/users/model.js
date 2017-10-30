@@ -2,7 +2,7 @@
 
 const model = require('seraph-model');
 
-const MODEL_LABEL = 'user';
+const MODEL_LABEL = 'User';
 
 module.exports = (db) => {
     const User = model(db, MODEL_LABEL);
@@ -12,5 +12,6 @@ module.exports = (db) => {
         page_id: {type: String, required: true},
         date_joined: {type: Date, default: "2017-01-09T00:00:00"} 
     };
+    User.setUniqueKey('page_id');
     return User;
 }
