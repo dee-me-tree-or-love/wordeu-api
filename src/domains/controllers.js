@@ -2,5 +2,5 @@
 
 module.exports = {
     'UserController' : require('./users/controller.js'),
-    'WordController' : require('./words/contorller.js')
+    'WordController' : require('./words/controller.js')
 }

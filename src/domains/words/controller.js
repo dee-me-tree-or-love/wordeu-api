@@ -23,16 +23,17 @@ module.exports = class WordController {
         return word;
     }
 
-    get(pageId, callback){
+    get(title, callback){
 
         if(!callback){
             throw new Error('no callback specified');
         }
 
         // TODO: implement search here
-
+        console.log(title);
         const word = WordModel(this.db);
-        word.where({title:pageId},callback);
+        word.where({title:title},callback);
         return word;
     }
+
 }

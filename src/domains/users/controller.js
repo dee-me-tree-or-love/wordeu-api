@@ -10,7 +10,7 @@ module.exports = class UserController {
     }
 
     create(pageId, userName, callback) {
-        if(!callback){
+        if (!callback) {
             throw new Error('no callback specified');
         }
 
@@ -22,26 +22,38 @@ module.exports = class UserController {
         return user;
     }
 
-    get(pageId, callback){
+    get(pageId, callback) {
 
-        if(!callback){
+        if (!callback) {
             throw new Error('no callback specified');
         }
 
         const user = UserModel(this.db);
-        user.where({page_id:pageId},callback);
+        user.where({ page_id: pageId }, callback);
         return user;
     }
 
 
-    getAll(callback){
+    getAll(callback) {
 
-        if(!callback){
+        if (!callback) {
             throw new Error('no callback specified');
         }
 
         const model = UserModel(this.db);
         model.findAll(callback);
         return model;
-    }    
+    }
+
+    addWords(user, words, callback) {
+
+        const model = UserModel(this.db);
+        model.compose()
+
+        for (let key in words) {
+            model.push(user, 'words', words[key], callback);
+        }
+
+    }
+
 }
