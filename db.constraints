@@ -1,0 +1,3 @@
+// TODO: make it a runnable query maybe? 
+CREATE CONSTRAINT ON (word:Word) ASSERT word.title IS UNIQUE;
+CREATE CONSTRAINT ON (user:User) ASSERT user.page_id IS UNIQUE;

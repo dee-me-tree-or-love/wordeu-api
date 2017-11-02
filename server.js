@@ -7,7 +7,7 @@ const neo4j = require('neo4j-driver').v1;
 const routes = require('./src/routes/index.js');
 const models = require('./src/models/index.js');
 
-// console.log(models);
+console.log(process.pid);
 
 // neo4j connection
 const db = neo4j.driver(
@@ -42,7 +42,10 @@ const shutDown = () => {
   console.log('Received kill signal, shutting down gracefully');
   // console.log(db);
   server.close(() => {
-    db.close();
+    db.close(() => {
+      console.log('closed driver');
+      process.exit(0);
+    });
     console.info('Closed remaining connections');
     process.exit(0);
   });

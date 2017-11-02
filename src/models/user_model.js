@@ -1,3 +1,4 @@
+// TODO: rename, it's not model really
 module.exports = class UserModel {
   /**
    * Instantiates a new Model object with the driver
@@ -7,21 +8,24 @@ module.exports = class UserModel {
     // neo4j driver
     this.db = db;
     this.LABEL = 'User';
+    this.WORD_RELATIONS = [
+      'Learns',
+      // 'Knows', TODO: think of a use case
+      'Added'
+    ];
   }
 
   create(pageId, name) {
     console.log('initializing session');
     try {
       const session = this.db.session();
-      // console.log(session);
-      // CREATE (n:User{page_id:'456',name:'Carl'}) RETURN n;
-      const query = `CREATE (user:${this.LABEL}{page_id:{_pageId},name:{_name}}) RETURN user;`;
-      // console.log('query:', query);
+      const query = `CREATE (user:${this.LABEL}{page_id:{_pageId},name:{_name},created:{_created}}) RETURN user;`;
       const promise = session.run(
         query,
         {
           _pageId: pageId,
-          _name: name
+          _name: name,
+          _created: Date.now()
         }
       )
         .then((res) => {
@@ -47,6 +51,45 @@ module.exports = class UserModel {
     }
   }
 
+  ensure(pageId, name) {
+    console.log('initializing session');
+    try {
+      const session = this.db.session();
+      // console.log(session);
+      const query = `MERGE (user:${this.LABEL}{page_id:{_pageId}}) 
+        ON CREATE SET user.created = {_created} , user.name = {_name}
+        RETURN user;`;
+      console.log('query:', query);
+      const promise = session.run(
+        query,
+        {
+          _pageId: pageId.toLowerCase(),
+          _name: name,
+          _created: Date.now()
+        }
+      )
+        .then((res) => {
+          console.log(res);
+          session.close(() => {
+            console.log('session closed');
+          });
+          return res.records.map((record) => {
+            return (record.get('user')).properties;
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          session.close(() => {
+            console.log('session closed');
+          });
+          return {};
+        });
+      return promise;
+    } catch (e) {
+      console.log(e);
+      return (e);
+    }
+  }
 
   getByPageId(pageId) {
     console.log('initializing session');
@@ -78,6 +121,44 @@ module.exports = class UserModel {
     } catch (e) {
       console.log(e);
       return (e);
+    }
+  }
+
+  addWord(pageId, targetTitle, relationType) {
+    console.log('initializing session');
+    try {
+      const session = this.db.session();
+      const query = `MATCH (user:${this.LABEL}{page_id:{_pageId}}), (word:Word{title:{_targetTitle}})
+      MERGE (user)-[r:${relationType}]->(word)
+        ON CREATE SET r.created = {_created}
+      RETURN user,r,word;`;
+      const promise = session.run(
+        query,
+        {
+          _pageId: pageId,
+          _targetTitle: targetTitle.toLowerCase(),
+          _created: Date.now()
+        }
+      )
+        .then((res) => {
+          session.close(() => {
+            console.log('session closed');
+          });
+          // TODO: find some better way to return data
+          console.log(res.records);
+          return res.records;
+        })
+        .catch((err) => {
+          console.log(err);
+          session.close(() => {
+            console.log('session closed');
+          });
+          return { error: err };
+        });
+      return promise;
+    } catch (e) {
+      console.log(e);
+      return { error: e };
     }
   }
 };
