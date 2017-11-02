@@ -1,0 +1,21 @@
+{
+    "extends": "airbnb",
+    "env": {
+        "node": true,
+        "es6": true
+    },
+    "parserOptions": {
+        "ecmaVersion": 6
+    },
+    "rules":{
+        "no-console":0,
+        "comma-dangle": ["error", {
+            "arrays": "never",
+            "objects": "never",
+            "imports": "never",
+            "exports": "never",
+            "functions": "ignore"
+        }],
+        "arrow-body-style": ["error", "always"]
+    }
+}
