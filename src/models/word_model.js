@@ -8,7 +8,10 @@ module.exports = class WordModel {
     // neo4j driver
     this.db = db;
     this.LABEL = 'Word';
-    this.TRANSLATE_RELATION = 'Translates';
+    this.WORD_RELATIONS = [
+      'Translates',
+      'Synonym'
+    ];
   }
 
   create(title) {
@@ -120,7 +123,7 @@ module.exports = class WordModel {
     }
   }
 
-  addTranslation(rootTitle, targetTitle) {
+  addRelation(rootTitle, targetTitle, relationType) {
     console.log('initializing session');
     try {
       const session = this.db.session();
@@ -131,7 +134,7 @@ module.exports = class WordModel {
       RETURN w,r,u
       */
       const query = `MATCH (w:${this.LABEL}{title:{_rootTitle}}), (u:${this.LABEL}{title:{_targetTitle}})
-      MERGE (w)-[r:${this.TRANSLATE_RELATION}]->(u)
+      MERGE (w)-[r:${relationType}]->(u)
         ON CREATE SET r.created = {_created}
       RETURN w,r,u;`;
       const promise = session.run(

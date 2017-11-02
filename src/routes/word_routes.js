@@ -63,19 +63,26 @@ module.exports = (app, db, models) => {
       });
   });
 
-  app.post(`/${DOMAIN}/translation/create`, (req, res) => {
+  app.post(`/${DOMAIN}/relation/create`, (req, res) => {
     console.log('Creating a new translation relation');
 
     console.log(req.body);
-    console.log(req.body.rootTitle);
-    console.log(req.body.targetTitle);
-    if (!(req.body.rootTitle && req.body.targetTitle)) {
-      res.status(400).send(JSON.stringify({ error: { message: 'no root or target translation word specified' } }));
+    // TODO: create a util verificator of the body
+    if (!(req.body.rootTitle && req.body.targetTitle && req.body.relationType)) {
+      res.status(400).send(JSON.stringify({ error: { message: 'no root or target translation word or relation type specified' } }));
       return;
     }
 
     const wordModel = models.Word(db);
-    wordModel.addTranslation(req.body.rootTitle, req.body.targetTitle)
+
+    let relType = req.body.relationType;
+    relType = (relType.charAt(0).toUpperCase() + relType.slice(1).toLowerCase());
+    if (!(wordModel.WORD_RELATIONS.includes(relType))) {
+      res.status(400).send(JSON.stringify({ error: { message: `relation type ${req.body.relationType} not in ${wordModel.WORD_RELATIONS}` } }));
+      return;
+    }
+
+    wordModel.addRelation(req.body.rootTitle, req.body.targetTitle, relType)
       .then((data) => {
         dataHandler(data, res);
       })

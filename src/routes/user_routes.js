@@ -77,12 +77,14 @@ module.exports = (app, db, models) => {
     }
     console.log(req.body.relationType);
     const userModel = models.User(db);
+
     let relType = req.body.relationType;
     relType = (relType.charAt(0).toUpperCase() + relType.slice(1).toLowerCase());
     if (!(userModel.WORD_RELATIONS.includes(relType))) {
       res.status(400).send(JSON.stringify({ error: { message: `relation type ${req.body.relationType} not in ${userModel.WORD_RELATIONS}` } }));
       return;
     }
+
     userModel.addWord(req.params.pageId, req.body.targetTitle, req.body.relationType)
       .then((data) => {
         dataHandler(data, res);
