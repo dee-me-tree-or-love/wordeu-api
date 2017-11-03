@@ -1,19 +1,5 @@
 const DOMAIN = 'users';
 
-// TODO: make a util function out of it in the models!
-// const dataHandler = (data, res) => {
-//   if (data.length === 0) {
-//     res.status(404).send(JSON.stringify({ error: { message: 'No records found' } }));
-//     return;
-//   }
-//   if (data.error) {
-//     res.status(500).send(JSON.stringify({ error: data.error }));
-//     return;
-//   }
-//   res.send(JSON.stringify(data));
-// };
-
-
 module.exports = (app, db, models) => {
   const dataHandler = models.dataHandler();
   // new user
