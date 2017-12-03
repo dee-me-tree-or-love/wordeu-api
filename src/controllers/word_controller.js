@@ -1,7 +1,7 @@
 // TODO: add inhertance, observe code duplication!
-module.exports = class WordModel {
+module.exports = class WordController {
   /**
-   * Instantiates a new Model object with the driver
+   * Instantiates a new Controller object with the driver
    * @param {neo4j-driver} db
    */
   constructor(db) {

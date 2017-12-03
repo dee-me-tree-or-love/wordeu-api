@@ -1,7 +1,7 @@
 const DOMAIN = 'users';
 
-module.exports = (app, db, models) => {
-  const dataHandler = models.dataHandler();
+module.exports = (app, db, controllers) => {
+  const dataHandler = controllers.dataHandler();
   // new user
   app.post(`/${DOMAIN}/new`, (req, res) => {
     console.log('New user called');
@@ -11,8 +11,8 @@ module.exports = (app, db, models) => {
       return;
     }
 
-    const userModel = models.User(db);
-    userModel
+    const userController = controllers.User(db);
+    userController
       .create(req.body.pageId, req.body.name)
       .then((data) => {
         dataHandler(data, res);
@@ -26,8 +26,8 @@ module.exports = (app, db, models) => {
   app.get(`/${DOMAIN}/pid/:pageId`, (req, res) => {
     console.log('Getting user');
 
-    const userModel = models.User(db);
-    userModel.getByPageId(req.params.pageId)
+    const userController = controllers.User(db);
+    userController.getByPageId(req.params.pageId)
       .then((data) => {
         dataHandler(data, res);
       })
@@ -45,8 +45,8 @@ module.exports = (app, db, models) => {
       return;
     }
 
-    const userModel = models.User(db);
-    userModel.ensure(req.params.pageId, req.body.name)
+    const userController = controllers.User(db);
+    userController.ensure(req.params.pageId, req.body.name)
       .then((data) => {
         dataHandler(data, res);
       })
@@ -62,16 +62,16 @@ module.exports = (app, db, models) => {
       return;
     }
     console.log(req.body.relationType);
-    const userModel = models.User(db);
+    const userController = controllers.User(db);
 
     let relType = req.body.relationType;
     relType = (relType.charAt(0).toUpperCase() + relType.slice(1).toLowerCase());
-    if (!(userModel.WORD_RELATIONS.includes(relType))) {
-      res.status(400).send(JSON.stringify({ error: { message: `relation type ${req.body.relationType} not in ${userModel.WORD_RELATIONS}` } }));
+    if (!(userController.WORD_RELATIONS.includes(relType))) {
+      res.status(400).send(JSON.stringify({ error: { message: `relation type ${req.body.relationType} not in ${userController.WORD_RELATIONS}` } }));
       return;
     }
 
-    userModel.addWord(req.params.pageId, req.body.targetTitle, req.body.relationType)
+    userController.addWord(req.params.pageId, req.body.targetTitle, req.body.relationType)
       .then((data) => {
         dataHandler(data, res);
       })

@@ -3,8 +3,8 @@ const wordRoutes = require('./word_routes.js');
 
 // the call to the routes index function
 module.exports = {
-  config: (app, db, models) => {
-    userRoutes(app, db, models);
-    wordRoutes(app, db, models);
+  config: (app, db, controllers) => {
+    userRoutes(app, db, controllers);
+    wordRoutes(app, db, controllers);
   }
 };
