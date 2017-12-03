@@ -50,6 +50,21 @@ module.exports = (app, db, controllers) => {
       });
   });
 
+  app.get(`/${DOMAIN}/title/:title/translations`, (req, res) => {
+    console.log('Getting translations by exact title match');
+
+    const wordController = controllers.Word(db);
+    wordController
+      .getTranslations(req.params.title)
+      .then((data) => {
+        dataHandler(data, res);
+      })
+      .catch((err) => {
+        console.log(`/${DOMAIN}/title problem: `, err);
+        res.status(500).send(JSON.stringify({ error: err }));
+      });
+  });
+
   app.put(`/${DOMAIN}/title/ensure/:title`, (req, res) => {
     console.log('Ensuring a word with exact title match exists');
 
@@ -80,8 +95,9 @@ module.exports = (app, db, controllers) => {
     // sanity check
     let relType = req.body.relationType;
     relType = (relType.charAt(0).toUpperCase() + relType.slice(1).toLowerCase());
-    if (!(wordController.WORD_RELATIONS.includes(relType))) {
-      res.status(400).send(JSON.stringify({ error: { message: `relation type ${req.body.relationType} not in ${wordController.WORD_RELATIONS}` } }));
+    const vals = Object.values(wordController.WORD_RELATIONS)
+    if (!(vals.includes(relType))) {
+      res.status(400).send(JSON.stringify({ error: { message: `relation type ${req.body.relationType} not in ${vals}` } }));
       return;
     }
 
@@ -95,4 +111,5 @@ module.exports = (app, db, controllers) => {
         res.status(500).send(JSON.stringify({ error: err }));
       });
   });
+
 };
