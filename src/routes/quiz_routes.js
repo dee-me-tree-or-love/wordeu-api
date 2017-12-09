@@ -18,6 +18,7 @@ module.exports = (app, db, controllers) => {
     quizController
       .getNewQuizWord(req.body.page_id)
       .then((data) => {
+        console.log(data);
         dataHandler(data, res);
       })
       .catch((err) => {

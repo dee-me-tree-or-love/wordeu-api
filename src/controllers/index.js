@@ -18,6 +18,7 @@ module.exports = {
 
   dataHandler: () => {
     const dataHandler = (data, res) => {
+      console.log(data);
       if (data.length === 0) {
         res.status(404).send(
           JSON.stringify({error: { message: 'No records found'}})

@@ -24,13 +24,24 @@ module.exports = class QuizController {
           session.close(() => {
             console.log('session closed');
           });
-          console.log(res.records);
+
           const options = res.records.map((record) => {
             return (record.get('word')).properties;
           });
-          const choice = Math.round((Math.random()*10)) % 3
-          console.log(`choice ${choice}`);
-          return options[choice];
+
+          if (options.length > 0) {
+
+            const options = res.records.map((record) => {
+              return (record.get('word')).properties;
+            });
+            const choice = Math.round((Math.random() * 10)) % 3
+            console.log(`choice ${choice}`);
+            return options[choice];
+
+          } else {
+            return options
+          }
+
         })
         .catch((err) => {
           console.log(err);
