@@ -23,7 +23,9 @@ module.exports = class WordController {
     console.log(MSG_SESSION_INIT);
     const session = this.db.session();
     try {
-      const query = `CREATE (word:${this.LABEL}{title:{_title},created:{_created}}) RETURN word;`;
+      const query = ` MERGE (word:${this.LABEL}{title:{_title}}) 
+                      ON CREATE SET word.created = {_created} 
+                      RETURN word;`;
       // console.log('query:', query);
       const promise = session.run(
         query,
