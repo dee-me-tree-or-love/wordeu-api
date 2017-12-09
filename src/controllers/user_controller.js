@@ -1,7 +1,6 @@
-// TODO: rename, it's not model really
-module.exports = class UserModel {
+module.exports = class UserController {
   /**
-   * Instantiates a new Model object with the driver
+   * Instantiates a new Controller object with the driver
    * @param {neo4j-driver} db
    */
   constructor(db) {

@@ -5,7 +5,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const neo4j = require('neo4j-driver').v1;
 const routes = require('./src/routes/index.js');
-const models = require('./src/models/index.js');
+const controllers = require('./src/controllers/index.js');
 
 console.log(process.pid);
 
@@ -26,14 +26,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 /* App startup */
-const server = app.listen(process.env.PORT || 5005, () => {
+const server = app.listen(process.env.PORT || 8008, () => {
   console.log(
     'Express server listening on port %d in %s mode',
     server.address().port,
     app.settings.env
   );
 
-  routes.config(app, db, models);
+  routes.config(app, db, controllers);
 });
 
 

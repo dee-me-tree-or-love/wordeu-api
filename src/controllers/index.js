@@ -1,12 +1,12 @@
-const UserModel = require('./user_model.js');
-const WordModel = require('./word_model.js');
+const UserController = require('./user_controller.js');
+const WordController = require('./word_controller.js');
 
 module.exports = {
   User: (db) => {
-    return new UserModel(db);
+    return new UserController(db);
   },
   Word: (db) => {
-    return new WordModel(db);
+    return new WordController(db);
   },
   dataHandler: () => {
     const dataHandler = (data, res) => {
