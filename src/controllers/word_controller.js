@@ -41,7 +41,7 @@ module.exports = class WordController {
           console.log('created word!: ', res.records);
           return res.records.map((record) => {
             return (record.get('word')).properties;
-          });
+          })[0];
         })
         .catch((err) => {
           console.log(err);
