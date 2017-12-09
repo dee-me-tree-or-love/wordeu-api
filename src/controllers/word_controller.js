@@ -1,4 +1,6 @@
 // TODO: add inhertance, observe code duplication!
+// TODO: make relationship and node types globally available
+// TODO: we need models! -- this really sucks, when we write direct calls...
 
 const MSG_SESSION_INIT = 'initializing session';
 const MSG_SESSION_CLOSED = 'session closed';
@@ -60,6 +62,50 @@ module.exports = class WordController {
     }
   }
 
+  createByUser(title, pid) {
+    console.log(MSG_SESSION_INIT);
+    const session = this.db.session();
+    try {
+      const query = ` 
+                      MERGE (word:${this.LABEL}{title:{_title}}) 
+                      ON CREATE SET word.created = {_created} 
+                      MERGE (user:User {page_id:{_pid}}) 
+                      MERGE (user)-[r:Added]->(word)
+                      RETURN word;`; //TODO: I do not want to merge users here
+      // console.log('query:', query);
+      const promise = session.run(
+        query,
+        {
+          _title: title.toLowerCase(),
+          _pid: pid,
+          _created: Date.now()
+        }
+      )
+        .then((res) => {
+          session.close(() => {
+            console.log(MSG_SESSION_CLOSED);
+          });
+          console.log('created word!: ', res.records);
+          return res.records.map((record) => {
+            return (record.get('word')).properties;
+          })[0];
+        })
+        .catch((err) => {
+          console.log(err);
+          session.close(() => {
+            console.log(MSG_SESSION_CLOSED);
+          });
+          return { error: err };
+        });
+      return promise;
+    } catch (e) {
+      console.log(e);
+      session.close(() => {
+        console.log(MSG_SESSION_CLOSED);
+      });
+      return (e);
+    }
+  }
 
   getByTitle(title) {
     console.log(MSG_SESSION_INIT);

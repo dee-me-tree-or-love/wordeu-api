@@ -15,6 +15,7 @@ const DOMAIN = 'words';
 
 module.exports = (app, db, controllers) => {
   const dataHandler = controllers.dataHandler();
+
   // new word
   app.post(`/${DOMAIN}/new`, (req, res) => {
     console.log('New user called');
@@ -22,10 +23,23 @@ module.exports = (app, db, controllers) => {
       res.status(400).send(JSON.stringify({ error: { message: 'no word title specified' } }));
       return;
     }
-
+    const body = req.body;
     const wordController = controllers.Word(db);
-    wordController
-      .create(req.body.title)
+    
+    const creationPromise = new Promise((resolve, reject)=>{
+      console.log('inside the promise');
+      if(body.page_id){
+        resolve(wordController.createByUser(body.title, body.page_id));
+        return; //TODO: probably not needed
+      }else{ 
+        resolve(wordController.create(body.title));
+        return;
+      }
+      reject(new Error("bad body"));
+      return;
+    });
+
+    creationPromise
       .then((data) => {
         dataHandler(data, res);
       })

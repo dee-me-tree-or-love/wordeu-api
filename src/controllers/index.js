@@ -8,10 +8,15 @@ module.exports = {
   Word: (db) => {
     return new WordController(db);
   },
+
+  // IDEA: candidate to be moved to a separate driver (helper) entity
+
   dataHandler: () => {
     const dataHandler = (data, res) => {
       if (data.length === 0) {
-        res.status(404).send(JSON.stringify({ error: { message: 'No records found' } }));
+        res.status(404).send(
+          JSON.stringify({error: { message: 'No records found'}})
+        );
         return;
       }
       if (data.error) {
