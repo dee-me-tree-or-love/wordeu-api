@@ -1,5 +1,6 @@
 const userRoutes = require('./user_routes.js');
 const wordRoutes = require('./word_routes.js');
+const quizRoutes = require('./quiz_routes.js');
 
 // the call to the routes index function
 module.exports = {
@@ -8,5 +9,6 @@ module.exports = {
     app.get('/', (req, res) => res.send('What brings you here?'));
     userRoutes(app, db, controllers);
     wordRoutes(app, db, controllers);
+    quizRoutes(app,db,controllers);
   }
 };
