@@ -2,18 +2,19 @@ const DOMAIN = 'users';
 
 module.exports = (app, db, controllers) => {
   const dataHandler = controllers.dataHandler();
+
   // new user
   app.post(`/${DOMAIN}/new`, (req, res) => {
     console.log('New user called');
 
-    if (!(req.body.pageId && req.body.name)) {
+    if (!(req.body.page_id && req.body.name)) {
       res.status(400).send(JSON.stringify({ error: { message: 'no user page id or name specified' } }));
       return;
     }
 
     const userController = controllers.User(db);
     userController
-      .create(req.body.pageId, req.body.name)
+      .create(req.body.page_id, req.body.name)
       .then((data) => {
         dataHandler(data, res);
       })
