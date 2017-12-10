@@ -12,6 +12,11 @@ module.exports = class QuizController {
   constructor(db) {
     // neo4j driver
     this.db = db;
+    this.scoreDegrees = {
+      best: 6,
+      okay: 3,
+      not_so_well: -1,
+    }
   }
 
   // TODO: move to a separate module!
@@ -20,17 +25,24 @@ module.exports = class QuizController {
     return 1 - (editDistance) / Math.max(text.length, search.length);
   }
 
-  calculateScore(similarity){
-    if (similarity > 0.7) { 
-      return 6;
-    }
-    if (similarity > 0.5) {
-      return 3;
-    }
-    return -1;
+  getScoreDegree(score) {
+    return Object.keys(this.scoreDegrees)
+      .reduce((degree, key) => {
+        return (this.scoreDegrees[key] == score) ? key : degree
+      });
   }
 
-  updateUserLearnScore(pageId, title, score){
+  calculateScore(similarity) {
+    if (similarity > 0.7) {
+      return this.scoreDegrees.best;
+    }
+    if (similarity > 0.5) {
+      return this.scoreDegrees.okay;
+    }
+    return this.scoreDegrees.not_so_well;
+  }
+
+  updateUserLearnScore(pageId, title, score) {
     console.log('updating user score');
     try {
       const session = this.db.session();
@@ -68,7 +80,7 @@ module.exports = class QuizController {
     console.log('initializing session');
     try {
       const session = this.db.session();
-      // MATCH (p:User {page_id:'121'}), (p)-[r:learns]->(w) RETURN w
+      // TODO: get only words that have at least one recorded translation
       const query = `MATCH (p:User {page_id:{_pid}}), (p)-[r:learns]->(word) RETURN word;`;
       const promise = session.run(
         query,
@@ -95,7 +107,7 @@ module.exports = class QuizController {
             // (score based weighting maybe)
             const choice = Math.round((Math.random() * 10)) % options.length;
             console.log(`choice ${choice}`);
-            
+
             return options[choice];
 
           } else {
@@ -154,7 +166,7 @@ module.exports = class QuizController {
           });
 
           // find the best
-          const best = options.reduce((a,b)=> {
+          const best = options.reduce((a, b) => {
             return (a.similarity > b.similarity) ? a : b;
           })
           const score = this.calculateScore(best.similarity);
@@ -163,10 +175,11 @@ module.exports = class QuizController {
             best_match: best,
             answer: answer,
             score: score,
+            degree: this.getScoreDegree(score),
             options: options
           };
-          
-          this.updateUserLearnScore(pageId,quizWord,score);
+
+          this.updateUserLearnScore(pageId, quizWord, score);
           return resp;
         })
         .catch((err) => {
