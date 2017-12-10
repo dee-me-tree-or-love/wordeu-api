@@ -14,6 +14,7 @@ module.exports = class WordController {
     // neo4j driver
     this.db = db;
     this.LABEL = 'Word';
+    // FIXME: change to lowercase
     this.WORD_RELATIONS = {
       'TRANSLATES':'Translates',
       'SYNONYM':'Synonym'

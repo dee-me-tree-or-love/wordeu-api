@@ -18,7 +18,6 @@ module.exports = (app, db, controllers) => {
     quizController
       .getNewQuizWord(req.body.page_id)
       .then((data) => {
-        console.log(data);
         dataHandler(data, res);
       })
       .catch((err) => {
@@ -29,7 +28,7 @@ module.exports = (app, db, controllers) => {
   });
 
   // an enpdoint to asses quiz word translation returns a score and remarks
-  app.put(`/${DOMAIN}/quiz-word/answer`, (req, res) => {
+  app.put(`/${DOMAIN}/quiz-word/answer/`, (req, res) => {
     console.log('Quiz word answer called');
 
     if (!(req.body.page_id && req.body.quiz_word && req.body.answer)) {
@@ -37,6 +36,18 @@ module.exports = (app, db, controllers) => {
       return;
     }
 
+    const quizController = controllers.Quiz(db);
+    quizController.assessQuizWordTranslation(
+      req.body.page_id,
+      req.body.quiz_word,
+      req.body.answer)
+      .then((data) => {
+        dataHandler(data, res);
+      })
+      .catch((err) => {
+        console.log(`/${DOMAIN}/quiz-word problem`);
+        res.status(500).send(JSON.stringify({ error: err }));
+      });
   });
 
 }
