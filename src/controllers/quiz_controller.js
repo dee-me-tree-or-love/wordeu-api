@@ -1,3 +1,5 @@
+const matching = require('../utils/matching.js');
+
 /* IDEA: make model classes that will describe 
 * the structure and properties of the data types (nodes and relationships)
 * used in the graph
@@ -14,40 +16,51 @@ module.exports = class QuizController {
 
   // TODO: move to a separate module!
   compareStrings(text, search) {
-    this.levensteinDistance(text, search);
-    // FIXME: change the implementation to actual damn LD already!
-    return (text == search);
+    const editDistance = matching.levensteinDistance(text, search);
+    return 1 - (editDistance) / Math.max(text.length, search.length);
   }
 
-  levensteinDistance(text, search) {
-    // cost operations
-    const insertCost = (char) => { return 1; };
-    const removeCost = (char) => { return 1; };
-    const updateCost = (charA, charB) => { return charA !== charB ? 1 : 0 };
-    // aliases for the two strings
-    const sa = text;
-    const sb = search;
-    // initialize the two dimensional array
-    let dist = new Array(sa.length);
-    console.log(dist.length)
-    for (let key = 0; key < 3; key++) {
-      dist[key] = new Array(sb.length);
+  calculateScore(similarity){
+    if (similarity > 0.7) { 
+      return 6;
     }
-    // populate the array
-    for (let i = 0; i < sa.length; i++) {
-      dist[i, 0] = i;
+    if (similarity > 0.5) {
+      return 3;
     }
-    for (let i = 0; i < sb.length; i++) {
-      dist[0, i] = i;
-    }
-    // the bottom up computation
-    for (let i = 0; i < sa.length; i++) {
-      for (let j = 0; j < sb.length; j++) {
-        // TODO: compute the three values and select the minimal
-        Math.min()
-      }
-    }
+    return -1;
+  }
 
+  updateUserLearnScore(pageId, title, score){
+    console.log('updating user score');
+    try {
+      const session = this.db.session();
+      const query = ` MATCH (p:User {page_id:{_pid}}), (p)-[r:learns]->(word:Word {title:{_title}}) 
+                      SET r.score = COALESCE(r.score,0) + ({_score});`;
+      const promise = session.run(
+        query,
+        {
+          _pid: pageId,
+          _title: title,
+          _score: score
+        }
+      )
+        .then((res) => {
+          session.close(() => {
+            console.log('session closed');
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+          session.close(() => {
+            console.log('session closed');
+          });
+          return { error: err };
+        });
+      return promise;
+    } catch (e) {
+      console.log(e);
+      return { error: e };
+    }
   }
 
 
@@ -82,6 +95,7 @@ module.exports = class QuizController {
             // (score based weighting maybe)
             const choice = Math.round((Math.random() * 10)) % options.length;
             console.log(`choice ${choice}`);
+            
             return options[choice];
 
           } else {
@@ -128,22 +142,32 @@ module.exports = class QuizController {
 
           const options = res.records.map((record) => {
 
-            const translation = record.get('t');
-            const option = translation.properties.title;
-            const similarity = this.compareStrings(option, answer);
+            const word = record.get('t').properties.title;
+            const similarity = this.compareStrings(word, answer);
 
             const comparisson = {
-              word: translation,
+              word: word,
               similarity: similarity
             }
 
             return comparisson;
           });
 
-          // check if all of them are false, return all the options there are
-          console.log(options);
+          // find the best
+          const best = options.reduce((a,b)=> {
+            return (a.similarity > b.similarity) ? a : b;
+          })
+          const score = this.calculateScore(best.similarity);
 
-          return options;
+          const resp = {
+            best_match: best,
+            answer: answer,
+            score: score,
+            options: options
+          };
+          
+          this.updateUserLearnScore(pageId,quizWord,score);
+          return resp;
         })
         .catch((err) => {
           console.log(err);

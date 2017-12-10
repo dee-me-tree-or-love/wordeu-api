@@ -25,13 +25,13 @@ module.exports = (app, db, controllers) => {
     }
     const body = req.body;
     const wordController = controllers.Word(db);
-    
-    const creationPromise = new Promise((resolve, reject)=>{
+
+    const creationPromise = new Promise((resolve, reject) => {
       console.log('inside the promise');
-      if(body.page_id){
+      if (body.page_id) {
         resolve(wordController.createByUser(body.title, body.page_id));
         return; //TODO: probably not needed
-      }else{ 
+      } else {
         resolve(wordController.create(body.title));
         return;
       }
@@ -103,13 +103,14 @@ module.exports = (app, db, controllers) => {
       res.status(400).send(JSON.stringify({ error: { message: 'no root or target translation word or relation type specified' } }));
       return;
     }
-  
+
     const wordController = controllers.Word(db);
-  
+
     // sanity check
     let relType = req.body.relationType;
     relType = (relType.charAt(0).toUpperCase() + relType.slice(1).toLowerCase());
-    const vals = Object.values(wordController.WORD_RELATIONS)
+    const vals = Object.keys(wordController.WORD_RELATIONS)
+      .map((key) => { return wordController.WORD_RELATIONS[key] });
     if (!(vals.includes(relType))) {
       res.status(400).send(JSON.stringify({ error: { message: `relation type ${req.body.relationType} not in ${vals}` } }));
       return;

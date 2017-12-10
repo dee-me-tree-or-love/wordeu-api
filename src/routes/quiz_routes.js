@@ -32,7 +32,7 @@ module.exports = (app, db, controllers) => {
     console.log('Quiz word answer called');
 
     if (!(req.body.page_id && req.body.quiz_word && req.body.answer)) {
-      res.status(400).send(JSON.stringify({ error: { message: 'no user page id' } }));
+      res.status(400).send(JSON.stringify({ error: { message: 'no user page id, quiz word or answer specified' } }));
       return;
     }
 

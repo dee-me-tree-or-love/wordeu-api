@@ -251,9 +251,25 @@ module.exports = class WordController {
           session.close(() => {
             console.log(MSG_SESSION_CLOSED);
           });
-          // TODO: find some better way to return data
-          console.log(res.records);
-          return res.records;
+          
+          if(res.records.length <= 0){
+            return res.records;
+          }
+          const source = res.records.map((record)=>{
+            return record.get('w').properties;
+          })[0];
+          const target = res.records.map((record)=>{
+            return record.get('u').properties;
+          })[0];
+          const relation = res.records.map((record)=>{
+            return record.get('r').type;
+          })[0];
+          const resp = {
+            root_word: source,
+            target_word: target,
+            relation: relation
+          }
+          return resp;
         })
         .catch((err) => {
           console.log(err);
