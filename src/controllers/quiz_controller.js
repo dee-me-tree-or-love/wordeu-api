@@ -68,7 +68,7 @@ module.exports = class QuizController {
     console.log('initializing session');
     try {
       const session = this.db.session();
-      // MATCH (p:User {page_id:'121'}), (p)-[r:learns]->(w) RETURN w
+      // TODO: get only words that have at least one recorded translation
       const query = `MATCH (p:User {page_id:{_pid}}), (p)-[r:learns]->(word) RETURN word;`;
       const promise = session.run(
         query,
