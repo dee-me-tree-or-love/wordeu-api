@@ -19,9 +19,12 @@ module.exports = {
         if (sa.charAt(i - 1) == sb.charAt(j - 1)) {
           dist[i][j] = dist[i - 1][j - 1];
         } else {
-          dist[i][j] = Math.min(dist[i - 1][j - 1] + 1, // substitution
+          dist[i][j] = Math.min(
+            dist[i - 1][j - 1] + 1, // substitution
             Math.min(dist[i][j - 1] + 1, // insertion
-              dist[i - 1][j] + 1)); // deletion
+              dist[i - 1][j] + 1), // deletion
+            (i>=2 && j>=2) ? dist[i-2][j-2] + 1 : Infinity // transposition if possible
+          ); 
         }
       }
     }
