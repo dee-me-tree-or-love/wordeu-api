@@ -22,7 +22,10 @@ module.exports = class QuizController {
   // TODO: move to a separate module!
   compareStrings(text, search) {
     const editDistance = matching.levensteinDistance(text, search);
-    return 1 - (editDistance) / Math.max(text.length, search.length);
+    return {
+      editDistance: editDistance,
+      score: 1 - (editDistance) / Math.max(text.length, search.length)
+    };
   }
 
   getScoreDegree(score) {
@@ -159,7 +162,8 @@ module.exports = class QuizController {
 
             const comparisson = {
               word: word,
-              similarity: similarity
+              similarity: similarity.score,
+              editDistance: similarity.editDistance
             }
 
             return comparisson;

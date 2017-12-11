@@ -22,8 +22,8 @@ module.exports = {
           dist[i][j] = Math.min(
             dist[i - 1][j - 1] + 1, // substitution
             Math.min(dist[i][j - 1] + 1, // insertion
-              dist[i - 1][j] + 1), // deletion
-            (i>=2 && j>=2) ? dist[i-2][j-2] + 1 : Infinity // transposition if possible
+              dist[i - 1][j] + 1) // deletion
+            // (i>=2 && j>=2) ? dist[i-2][j-2] + 1 : Infinity // transposition if possible
           ); 
         }
       }
